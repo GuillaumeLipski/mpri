@@ -84,7 +84,8 @@ void nonAlea(double* m){
 
 void alea(double* m){
 
-  for(int i=0;i<10;i++){
+  int i
+  for(i=0;i<10;i++){
     m[i]=drand48()*(0.8)+0.1;
   }
   m[1] = 0.9;
@@ -94,6 +95,15 @@ void alea(double* m){
 void glouton(){
 
 }
+
+void eps(){
+
+}
+
+void ucb(){
+
+}
+
 
 int main(void) {
 	int i;
@@ -146,6 +156,21 @@ int main(void) {
 		miseajour(&data_bidon, choix, xt[choix]);
 		
 		// TODO: autres méthodes + calcul du regret
+		
+		
+		// Appel de la méthode glouton
+		choix = glouton(data_gouton, t); 		
+		miseajour(&data_gouton, choix, xt[choix]);
+		
+		
+		// Appel de la méthode eps
+		choix = eps(data_eps, t); 		
+		miseajour(&data_eps, choix, xt[choix]);
+		
+		
+		// Appel de la méthode ucb
+		choix = ucb(data_ucb, t); 		
+		miseajour(&data_ucb, choix, xt[choix]);
 
 		int som = 0;
 
