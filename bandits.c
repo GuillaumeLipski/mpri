@@ -92,16 +92,16 @@ void alea(double* m){
 
 }
 
-void glouton(){
-
+int glouton(){
+  return 0;
 }
 
-void eps(){
-
+int eps(){
+  return 0;
 }
 
-void ucb(){
-
+int ucb(){
+  return 0;
 }
 
 
@@ -139,6 +139,9 @@ int main(void) {
 	int T = 10000; // temps max 
 	int t = 0;
 	int choix;
+	int choixgouton;
+	int choixeps;
+	int choixucb;
 	double xt[K]; 
 	
 	double regret_bidon = 0;
@@ -159,17 +162,17 @@ int main(void) {
 		
 		
 		// Appel de la méthode glouton
-		choix = glouton(data_gouton, t); 		
+		choixgouton = glouton(data_gouton, t); 		
 		miseajour(&data_gouton, choix, xt[choix]);
 		
 		
 		// Appel de la méthode eps
-		choix = eps(data_eps, t); 		
+		choixeps = eps(data_eps, t); 		
 		miseajour(&data_eps, choix, xt[choix]);
 		
 		
 		// Appel de la méthode ucb
-		choix = ucb(data_ucb, t); 		
+		choixucb = ucb(data_ucb, t); 		
 		miseajour(&data_ucb, choix, xt[choix]);
 
 		int som = 0;
