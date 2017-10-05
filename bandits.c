@@ -46,7 +46,10 @@ int optimal(Data data) {
 	for (i=1;i<K;i++)
 		if ( data.mu[i] > data.mu[choix] )
 			choix = i;
-	return choix;	
+		
+	//return choix;	
+
+  return 1;
 }
 
 
@@ -99,6 +102,15 @@ int main(void) {
 	Data data_optimal;
 	data_optimal.gain = 0;
 	
+	Data data_gouton;
+	data_gouton.gain = 0;
+	
+	Data data_eps;
+	data_eps.gain = 0;
+	
+	Data data_ucb;
+	data_ucb.gain = 0;
+	
 	Data data_bidon;
 	data_bidon.gain = 0;
 	data_bidon.param_int = 2;
@@ -118,7 +130,12 @@ int main(void) {
 	int t = 0;
 	int choix;
 	double xt[K]; 
+	
 	double regret_bidon = 0;
+	double rglouton = 0;
+	double resp = 0;
+	double rucb = 0;
+	
 	while ( t < T ) {
 		// tirage des K bras
 		for ( i=0; i< K; i++)
