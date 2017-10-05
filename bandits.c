@@ -84,7 +84,7 @@ void nonAlea(double* m){
 
 void alea(double* m){
 
-  int i
+  int i;
   for(i=0;i<10;i++){
     m[i]=drand48()*(0.8)+0.1;
   }
