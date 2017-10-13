@@ -22,6 +22,7 @@ typedef struct {
 } Data; 
 
 double mu[K]; // moyennes des Xi
+int tour = 0;
 	
 // Fonction permettant de tirer le bras i : retourne la récompense observée x_i
 double tirerbras( int i ) {
@@ -47,9 +48,9 @@ int optimal(Data data) {
 		if ( data.mu[i] > data.mu[choix] )
 			choix = i;
 		
-	//return choix;	
+	return choix;	
 
-  return 1;
+  //return 1;
 }
 
 
@@ -82,7 +83,7 @@ void nonAlea(double* m){
 
 }
 
-void alea(double* m){
+void alea(double* m){ 
 
   int i;
   for(i=0;i<10;i++){
@@ -92,16 +93,20 @@ void alea(double* m){
 
 }
 
-int glouton(){
-  return 0;
+int glouton(Data data, int t){
+  
+  if(tour<100){
+    return drand48()*9;
+  }
+  return 1;
 }
 
-int eps(){
-  return 0;
+int eps(Data data, int t){
+  return 1;
 }
 
-int ucb(){
-  return 0;
+int ucb(Data data, int tr){
+  return 1;
 }
 
 
@@ -151,6 +156,8 @@ int main(void) {
 	
 	while ( t < T ) {
 		// tirage des K bras
+	  tour = t;
+	  
 		for ( i=0; i< K; i++)
 			xt[i] = tirerbras(i);
 		
@@ -178,8 +185,9 @@ int main(void) {
 		int som = 0;
 
 		regret_bidon = regret_bidon + mu[1]-mu[choix];
+		rglouton = rglouton + mu[1]-mu[choixgouton];
 		
-		printf("iter #%d, regret bidon = %lf \n",t,regret_bidon);
+		printf("iter #%d, regret bidon = %lf ,regret glouton = %lf \n",t,regret_bidon,rglouton);
 		t++;		
 	}
 
