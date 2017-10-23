@@ -23,10 +23,17 @@ typedef struct {
 
 double mu[K]; // moyennes des Xi
 int tour = 0;
+
+double random(){
+	double f = (double)rand() / (double)RAND_MAX;
+//	printf("%f",f);
+	return f;
+}
 	
 // Fonction permettant de tirer le bras i : retourne la récompense observée x_i
-double tirerbras( int i ) {
-	double x = 1.0 * (drand48() <= mu[i]); // bernouilli avec moyenne mu[i]
+double tirerbras( int i ) { //drand48
+	double x = 1.0 * (random() <= mu[i]); // bernouilli avec moyenne mu[i]
+//	printf("%f\n",x);
 	return x;
 }
 	
@@ -83,11 +90,14 @@ void nonAlea(double* m){
 
 }
 
+
 void alea(double* m){ 
 
   int i;
   for(i=0;i<10;i++){
-    m[i]=drand48()*(0.8)+0.1;
+    int a =(double)random()*(0.8)+0.1;
+  //	printf("%d",a);
+	m[i] = a;
   }
   m[1] = 0.9;
 
@@ -96,12 +106,45 @@ void alea(double* m){
 int glouton(Data data, int t){
   
   if(tour<100){
-    return drand48()*9;
+  	
+  	float z = random()*9;
+  	z = (int)z;
+  	//printf("%f\n",z);
+    return z;
   }
-  return 1;
+  
+//  printf("gain : %d\n",data.gain);
+  
+  double mu2[10];
+  int i = 0;
+  for(i =0; i <10;i++){
+//	mu2[i]=i;
+	mu2[i]=  (1.0/(data.N[i]+1.0))	* data.gain;
+//	printf("%f\n",mu2[i]);
+  }
+  
+  int res = 0;
+  double val = 0;
+  
+    for(i =0; i <10;i++){
+    	if(mu2[i]>=val){
+    		val = mu2[i];
+    		res = i;
+		}
+  }
+  return res;
 }
 
 int eps(Data data, int t){
+	
+	double eps = 0.1;
+	
+	if(random()>=eps){
+		return glouton(data,t);
+	}else{
+		return random()*9;
+	}
+	
   return 1;
 }
 
@@ -109,16 +152,45 @@ int ucb(Data data, int tr){
   return 1;
 }
 
+void afftab(double  t[], int taille){
+	int i = 0 ;
+	for(i = 0 ; i < taille;i++){
+		printf("%f ",t[i]);
+	}
+	printf("\n");
+}
 
 int main(void) {
-	int i;
+	
 	srand(time(NULL));
+	
+	int test = 0;
+	if (test==1){
+		
+		
+		printf("%d\n",random());
+		double tst = rand()%100;
+		tst = tst/100.0;
+		
+		printf("%f\n",tst);
+		
+		return 0;
+	}
+	
+	int glou = 0;
+	int bid = 0;
+	int tourr = 0;
+/*	double moyenne = 0;
+	while(tourr<1000){*/
+	
+	
+	int i;
 	
 	Data data_optimal;
 	data_optimal.gain = 0;
 	
-	Data data_gouton;
-	data_gouton.gain = 0;
+	Data data_glouton;
+	data_glouton.gain = 0;
 	
 	Data data_eps;
 	data_eps.gain = 0;
@@ -169,27 +241,51 @@ int main(void) {
 		
 		
 		// Appel de la méthode glouton
-		choixgouton = glouton(data_gouton, t); 		
-		miseajour(&data_gouton, choix, xt[choix]);
+		choixgouton = glouton(data_glouton, t); 		
+		miseajour(&data_glouton, choixgouton, xt[choixgouton]);
 		
 		
 		// Appel de la méthode eps
 		choixeps = eps(data_eps, t); 		
-		miseajour(&data_eps, choix, xt[choix]);
+		miseajour(&data_eps, choixeps, xt[choixeps]);
 		
 		
 		// Appel de la méthode ucb
 		choixucb = ucb(data_ucb, t); 		
-		miseajour(&data_ucb, choix, xt[choix]);
+		miseajour(&data_ucb, choixucb, xt[choixucb]);
 
 		int som = 0;
 
 		regret_bidon = regret_bidon + mu[1]-mu[choix];
 		rglouton = rglouton + mu[1]-mu[choixgouton];
+		resp = resp + mu[1]-mu[choixeps];
 		
-		printf("iter #%d, regret bidon = %lf ,regret glouton = %lf \n",t,regret_bidon,rglouton);
+		//printf("iter #%d, regret bidon = %lf ,regret glouton = %lf \n",t,regret_bidon,rglouton);
+		//printf("iter #%d, gain bidon = %lf ,gain glouton = %lf \n",t,data_bidon.gain,data_glouton.gain);
 		t++;		
 	}
+
+	printf(" regret bidon = %lf ,glouton = %lf, eps = %lf\n",regret_bidon,rglouton,resp);
+	printf(" gain   bidon = %lf ,glouton = %lf, eps = %lf\n",data_bidon.gain,data_glouton.gain,data_eps.gain);
+	
+	
+/*	
+	if(data_bidon.gain>=data_glouton.gain){
+		//printf("win : bidon\n");
+		bid++;
+	}else{
+		glou++;
+		//printf("win : glouton\n");
+	}
+	tourr++;
+	moyenne = moyenne + data_bidon.gain-data_glouton.gain;
+}
+moyenne = moyenne /1000.0;
+	printf("glouton \t bidon\n%d \t %d\n",glou,bid);
+	printf("%f",moyenne);*/
+	
+	//afftab(xt,10);
+	//afftab(mu,10);
 
 	return 0;
 }
