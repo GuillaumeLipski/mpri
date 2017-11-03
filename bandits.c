@@ -29,6 +29,23 @@ double random(){
 //	printf("%f",f);
 	return f;
 }
+
+double conf(Data data, int tr, int bras ){
+	
+	//data.N[i];
+	
+	double haut = (3*log(tr));
+	//printf("conf1 %lf\n",haut);
+	double bas = (2*data.N[bras]+1.0);
+	//printf("conf2 %lf\n",bas);
+	
+	double x = sqrt(haut/bas);
+	//printf("conf3 %lf\n",x);
+	
+	//printf("%lf\n",x);
+	
+	return x;
+}
 	
 // Fonction permettant de tirer le bras i : retourne la récompense observée x_i
 double tirerbras( int i ) { //drand48
@@ -149,7 +166,35 @@ int eps(Data data, int t){
 }
 
 int ucb(Data data, int tr){
-  return 1;
+	
+	  //printf("mouch1\n");
+  double mu2[10];
+  int i = 0;
+  for(i =0; i <10;i++){
+//	mu2[i]=i;
+	mu2[i]=  (1.0/(data.N[i]+1.0))	* data.gain;
+//	printf("%f\n",mu2[i]);
+  }	
+//  printf("mouch2 %d\n",tr);
+  
+  
+  
+  for(int j = 0 ; j <10 ; j++){
+  	mu2[j]= mu2[j]+conf(data,tr,j);
+  }
+  //printf("mouch3\n");
+  int res = 0;
+  double val = 0;
+  
+    for(i =0; i <10;i++){
+    	if(mu2[i]>=val){
+    		val = mu2[i];
+    		res = i;
+		}
+  }
+  //printf("mouch4\n");
+	
+  return res;
 }
 
 void afftab(double  t[], int taille){
@@ -163,6 +208,10 @@ void afftab(double  t[], int taille){
 int main(void) {
 	
 	srand(time(NULL));
+	
+	FILE* fichier = NULL;
+	
+	fichier = fopen("regret.dat","w+");
 	
 	int test = 0;
 	if (test==1){
@@ -259,14 +308,18 @@ int main(void) {
 		regret_bidon = regret_bidon + mu[1]-mu[choix];
 		rglouton = rglouton + mu[1]-mu[choixgouton];
 		resp = resp + mu[1]-mu[choixeps];
+		rucb = rucb + mu[1]-mu[choixucb];
 		
 		//printf("iter #%d, regret bidon = %lf ,regret glouton = %lf \n",t,regret_bidon,rglouton);
 		//printf("iter #%d, gain bidon = %lf ,gain glouton = %lf \n",t,data_bidon.gain,data_glouton.gain);
 		t++;		
+		
+		fprintf(fichier,"%lf %lf %lf\n",data_glouton.gain,data_eps.gain,data_ucb.gain);
+		
 	}
 
-	printf(" regret bidon = %lf ,glouton = %lf, eps = %lf\n",regret_bidon,rglouton,resp);
-	printf(" gain   bidon = %lf ,glouton = %lf, eps = %lf\n",data_bidon.gain,data_glouton.gain,data_eps.gain);
+	printf(" regret bidon = %lf ,glouton = %lf, eps = %lf, ucb = %lf\n",regret_bidon,rglouton,resp,rucb);
+	printf(" gain   bidon = %lf ,glouton = %lf, eps = %lf, ucb = %lf\n",data_bidon.gain,data_glouton.gain,data_eps.gain,data_ucb.gain);
 	
 	
 /*	
@@ -287,5 +340,6 @@ moyenne = moyenne /1000.0;
 	//afftab(xt,10);
 	//afftab(mu,10);
 
+	fclose(fichier);
 	return 0;
 }
