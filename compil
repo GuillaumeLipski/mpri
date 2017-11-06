@@ -1,0 +1,2 @@
+gcc bandits.c -o bandit -lm
+./bandit

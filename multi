@@ -1,4 +1,4 @@
 gcc bandits.c -o bandit -lm
 ./bandit
 gnuplot regret
-display courbe_regret_bandits.jpg 
+display courbe_regret_bandits.jpg &
