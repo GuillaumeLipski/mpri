@@ -24,16 +24,16 @@ typedef struct {
 
 double mu[K]; // moyennes des Xi
 int tour = 0;
-
+/*
 double random(){
 	double f = (double)rand() / (double)RAND_MAX;
 //	printf("%f",f);
 	return f;
-}
+}*/
 	
 // Fonction permettant de tirer le bras i : retourne la récompense observée x_i
 double tirerbras( int i ) { //drand48
-	double x = 1.0 * (random() <= mu[i]); // bernouilli avec moyenne mu[i]
+	double x = 1.0 * (drand48() <= mu[i]); // bernouilli avec moyenne mu[i]
 //	printf("%f\n",x);
 	return x;
 }
@@ -130,7 +130,7 @@ void alea(double* m){
 
   int i;
   for(i=0;i<10;i++){
-    int a =(double)random()*(0.8)+0.1;
+    int a =(double)drand48()*(0.8)+0.1;
   //	printf("%d",a);
 	m[i] = a;
   }
@@ -143,7 +143,7 @@ int glouton(Data data, int t){
 	//afftab(data.N,10);  
   if(tour<100){
   	
-  	float z = random()*9;
+  	float z = drand48()*9;
   	z = (int)z;
   	//printf("%f\n",z);
     return z;
@@ -178,7 +178,7 @@ int eps(Data data, int t){
 	if(random()>=eps){
 		return glouton(data,t);
 	}else{
-		return random()*9;
+		return drand48()*9;
 	}
 	
   return 1;
@@ -227,7 +227,8 @@ int ucb(Data data, int tr){
   //printf("^^^vvv\n");
   //affdouble(mu2,10);
   //fflush(stdout);
-  for(int j = 0 ; j <10 ; j++){
+  int j = 0;
+  for(j = 0 ; j <10 ; j++){
   	mu2[j]= mu2[j]+conf(data,tr,j);	
 	//printf("mouch3 %lf \n",conf(data,tr,j));
   }
@@ -256,12 +257,16 @@ int main(void) {
 	
 	srand(time(NULL));
 	
-	FILE* fichier = NULL;
+	FILE* fichG = NULL;
 	
-	fichier = fopen("regret.dat","w+");
+	fichG = fopen("gain.dat","w+");
+	
+	FILE* fichR = NULL;
+	
+	fichR = fopen("regret.dat","w+");
 	
 	int test = 0;
-	if (test==1){
+	/*if (test==1){
 		
 		
 		printf("%d\n",random());
@@ -271,7 +276,7 @@ int main(void) {
 		printf("%f\n",tst);
 		
 		return 0;
-	}
+	}*/
 	
 	int glou = 0;
 	int bid = 0;
@@ -374,7 +379,8 @@ int main(void) {
 		t++;		
 
 	
-		fprintf(fichier,"%lf %lf %lf\n",data_glouton.gain,data_eps.gain,data_ucb.gain);
+		fprintf(fichG,"%lf %lf %lf\n",data_glouton.gain,data_eps.gain,data_ucb.gain);
+		fprintf(fichR,"%lf %lf %lf\n",rglouton,resp,rucb);
 		
 	}
 		affint(data_glouton.N,10);
@@ -402,6 +408,7 @@ moyenne = moyenne /1000.0;
 	//afftab(xt,10);
 	//afftab(mu,10);
 
-	fclose(fichier);
+	fclose(fichG);
+	fclose(fichR);
 	return 0;
 }

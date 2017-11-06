@@ -1,0 +1,3 @@
+set terminal jpeg
+set output "courbe_regret_bandits.jpg"
+plot "regret.dat" using 1 with lines, "regret.dat" using 2 with lines, "regret.dat" using 3 with lines

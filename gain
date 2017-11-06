@@ -1,0 +1,3 @@
+set terminal jpeg
+set output "courbe regret bandits.jpg"
+plot "gain.dat" using 1 with lines, "gain.dat" using 2 with lines, "gain.dat" using 3 with lines
